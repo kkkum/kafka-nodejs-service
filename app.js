@@ -28,6 +28,7 @@ var runProducer = true;
 var runConsumer = true;
 var producer, consumer, admin;
 var services;
+var serviceType = "both"; // This is the default
 
 if (process.env.VCAP_SERVICES) {
     console.log("Using VCAP_SERVICES to find credentials.");
@@ -46,6 +47,20 @@ if (process.env.VCAP_SERVICES) {
         }
     }
     opts.calocation = '/etc/ssl/certs';
+
+    // Check environment variable TYPE if the service should be producer or consumer
+    if (process.env.TYPE) {
+        serviceType = process.env.TYPE;
+        console.log("Detected TYPE is " + serviceType);
+
+        if (serviceType === "producer")
+            runConsumer = false;
+
+        if (serviceType === "consumer")
+            runProducer = false; 
+
+    }
+
     
 } else {
     // Running locally on development machine

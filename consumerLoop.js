@@ -41,6 +41,24 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
         'auto.offset.reset': 'latest'
     };
 
+    // function to insert documents into mongoDB
+    var insertDocuments = function(db, callback) {
+        // Get the documents collection
+        var collection = db.collection('messages');
+        // Insert some documents
+        collection.insertMany([
+          {key : 1, value: "This is message 1"},
+          {key : 2, value: "This is message 2"},
+          {key : 3, value: "This is message 3"}
+        ], function(err, result) {
+          assert.equal(err, null);
+          assert.equal(3, result.result.n);
+          assert.equal(3, result.ops.length);
+          console.log("Inserted 3 documents into the collection");
+          callback(result);
+        });
+    };
+
     consumer = new Kafka.KafkaConsumer(consumer_opts, topicOpts);
 
     // Register listener for debug information; only invoked if debug option set in driver_options
@@ -65,7 +83,10 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
                 assert.equal(null, err);
                 var db = client.db('sampledb');
                 console.log('database connected!');
-                client.close();
+
+                insertDocuments(db, function() {
+                    client.close();
+                  });
             });
         }
 

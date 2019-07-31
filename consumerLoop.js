@@ -42,15 +42,11 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
     };
 
     // function to insert documents into mongoDB
-    var insertDocuments = function(db, callback) {
+    var insertDocuments = function(db, docs, callback) {
         // Get the documents collection
         var collection = db.collection('messages');
         // Insert some documents
-        collection.insertMany([
-          {key : 1, value: "This is message 1"},
-          {key : 2, value: "This is message 2"},
-          {key : 3, value: "This is message 3"}
-        ], function(err, result) {
+        collection.insertMany(docs, function(err, result) {
           assert.equal(err, null);
           assert.equal(3, result.result.n);
           assert.equal(3, result.ops.length);
@@ -84,7 +80,13 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
                 var db = client.db('sampledb');
                 console.log('database connected!');
 
-                insertDocuments(db, function() {
+                var docs = [
+                    {key : 1, value: "This is message 1"},
+                    {key : 2, value: "This is message 2"},
+                    {key : 3, value: "This is message 3"}
+                  ];
+
+                insertDocuments(db, docs, function() {
                     client.close();
                   });
             });

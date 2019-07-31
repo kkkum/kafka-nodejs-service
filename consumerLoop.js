@@ -50,7 +50,7 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
           assert.equal(err, null);
           // assert.equal(3, result.result.n);
           // assert.equal(3, result.ops.length);
-          console.log("Inserted" + result.result.n + " documents into the collection");
+          console.log("Number of documents inserted to the collection: " + result.result.n );
           callback(result);
         });
     };
@@ -133,14 +133,13 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
                     console.log('Message consumed: topic=' + m.topic + ', partition=' + m.partition + ', offset=' + m.offset + ', key=' + m.key + ', value=' + m.value.toString());
 
                     // Push the message into the docs array for storage into mongoDB
-                    var msg = {key: m.key, value: m.value.toString()};
+                    var msg = {key: m.key.toString(), value: m.value.toString()};
                     docs.push(msg);
                 }
                 // Insert messages into mongoDB instance
                 insertDocuments(dbObject, docs, function() {
                     console.log("Insert messages into mongoDB");
                   });
-
 
                 consumedMessages = [];
             }

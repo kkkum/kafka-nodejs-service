@@ -33,7 +33,8 @@
     "node-rdkafka"
   ],
   "dependencies": {
-    "node-rdkafka": "2.6.1"
+    "node-rdkafka": "2.6.1",
+    "mongodb": "^3.3.0-beta2"
   },
   "engines": {
     "node": "10"

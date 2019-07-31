@@ -21,6 +21,9 @@
 var consumer;
 var consumerLoop;
 
+var MongoClient = require('mongodb').MongoClient, assert = require('assert');
+var url = "mongodb://mongouser:mongopassw0rd@mongodb.k8s-mvp.svc.cluster.local/sampledb";
+
 var exports = module.exports = {};
 exports.consumerLoop = consumerLoop;
 
@@ -54,6 +57,17 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
     // Register callback to be invoked when consumer has connected
     consumer.on('ready', function() {
         console.log('The consumer has connected.');
+
+        // Connect to the mongoDB instance if the MONGODB_URL is valid
+
+        if (url) {
+            MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+                assert.equal(null, err);
+                var db = client.db('sampledb');
+                console.log('database connected!');
+                client.close();
+            });
+        }
 
         // request metadata for one topic
         consumer.getMetadata({

@@ -48,12 +48,14 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
         // Insert some documents
         collection.insertMany(docs, function(err, result) {
           assert.equal(err, null);
-          assert.equal(3, result.result.n);
-          assert.equal(3, result.ops.length);
-          console.log("Inserted 3 documents into the collection");
+          // assert.equal(3, result.result.n);
+          // assert.equal(3, result.ops.length);
+          console.log("Inserted" + result.result.n + " documents into the collection");
           callback(result);
         });
     };
+    var dbObject;
+    // var clientObject;
 
     consumer = new Kafka.KafkaConsumer(consumer_opts, topicOpts);
 
@@ -77,9 +79,10 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
         if (url) {
             MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
                 assert.equal(null, err);
-                var db = client.db('sampledb');
+                dbObject = client.db('sampledb');
+                // clientObject = client;
                 console.log('database connected!');
-
+/*
                 var docs = [
                     {key : 1, value: "This is message 1"},
                     {key : 2, value: "This is message 2"},
@@ -89,6 +92,7 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
                 insertDocuments(db, docs, function() {
                     client.close();
                   });
+                  */
             });
         }
 
@@ -123,10 +127,21 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
             if (consumedMessages.length === 0) {
                 console.log('No messages consumed');
             } else {
+                var docs = [];
                 for (var i = 0; i < consumedMessages.length; i++) {
-                    var m = consumedMessages[i];
+                    var m = consumedMessages[i];                 
                     console.log('Message consumed: topic=' + m.topic + ', partition=' + m.partition + ', offset=' + m.offset + ', key=' + m.key + ', value=' + m.value.toString());
+
+                    // Push the message into the docs array for storage into mongoDB
+                    var msg = {key: m.key, value: m.value.toString()};
+                    docs.push(msg);
                 }
+                // Insert messages into mongoDB instance
+                insertDocuments(dbObject, docs, function() {
+                    console.log("Insert messages into mongoDB");
+                  });
+
+
                 consumedMessages = [];
             }
         }, 2000);

@@ -22,7 +22,8 @@ var consumer;
 var consumerLoop;
 
 var MongoClient = require('mongodb').MongoClient, assert = require('assert');
-var url = "mongodb://mongouser:mongopassw0rd@mongodb.k8s-mvp.svc.cluster.local/sampledb";
+//var url = "mongodb://mongouser:mongopassw0rd@mongodb.k8s-mvp.svc.cluster.local/sampledb";
+var mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL;
 
 var exports = module.exports = {};
 exports.consumerLoop = consumerLoop;
@@ -74,10 +75,10 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
     consumer.on('ready', function() {
         console.log('The consumer has connected.');
 
-        // Connect to the mongoDB instance if the MONGODB_URL is valid
+        // Connect to the mongoDB instance if the MONGO_URL environment variable is set
 
-        if (url) {
-            MongoClient.connect(url, { useNewUrlParser: true }, (err, client) => {
+        if (mongoURL) {
+            MongoClient.connect(mongoURL, { useNewUrlParser: true }, (err, client) => {
                 assert.equal(null, err);
                 dbObject = client.db('sampledb');
                 // clientObject = client;
@@ -136,10 +137,14 @@ exports.buildConsumer = function(Kafka, consumer_opts, topicName, shutdown) {
                     var msg = {key: m.key.toString(), value: m.value.toString()};
                     docs.push(msg);
                 }
-                // Insert messages into mongoDB instance
-                insertDocuments(dbObject, docs, function() {
-                    console.log("Insert messages into mongoDB");
-                  });
+
+                if (mongoURL) {
+                    // Insert messages into mongoDB instance if the MONGO_URL environment variable is set
+                    insertDocuments(dbObject, docs, function() {
+                        console.log("Inserted messages into mongoDB");
+                    });
+                }
+                
 
                 consumedMessages = [];
             }

@@ -29,6 +29,8 @@ var runConsumer = true;
 var producer, consumer, admin;
 var services;
 var serviceType = "both"; // This is the default
+var consumerClientId = process.env.CONSUMER_CLIENT_ID || 'kafka-nodejs-console-sample-consumer';
+var consumerGroupId = process.env.CONSUMER_GROUP_ID || 'kafka-nodejs-console-sample-group';
 
 if (process.env.VCAP_SERVICES) {
     console.log("Using VCAP_SERVICES to find credentials.");
@@ -213,8 +215,8 @@ admin.createTopic({
 // Build and start the producer/consumer
 function runLoops() {
     var consumer_opts = {
-        'client.id': 'kafka-nodejs-console-sample-consumer',
-        'group.id': 'kafka-nodejs-console-sample-group'
+        'client.id': consumerClientId,
+        'group.id': consumerGroupId
     };
 
     var producer_opts = {

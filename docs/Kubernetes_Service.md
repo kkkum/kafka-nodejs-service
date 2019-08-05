@@ -56,7 +56,7 @@ To build and run the sample, you must have the done the following:
 
 8. In the terminal, use the CLI to create a kafka-consumer application that stores messages received into the MongoDB database which you created in step 6. For example:
     ```shell
-    oc new-app https://github.com/kkkum/kafka-nodejs-service --name kafka-consumer -e TYPE=consumer MONGO_URL=mongodb://mongouser:mongopassword@mongodb.k8s-mvp.svc.cluster.local/sampledb CONSUMER_CLIENT_ID=kafka-consumer1 -e CONSUMER_GROUP_ID=kafka-consumer-group1
+    oc new-app https://github.com/kkkum/kafka-nodejs-service --name kafka-consumer -e TYPE=consumer MONGO_URL=mongodb://mongouser:mongopassword@mongodb.k8s-mvp.svc.cluster.local/sampledb CONSUMER_CLIENT_ID=kafka-consumer1 CONSUMER_GROUP_ID=kafka-consumer-group1
     ```
     * The command above creates a message consuming application in your project named `kafka-consumer`.
     * Its CONSUMER_CLIENT_ID is `kafka-consumer1` and CONSUMER_GROUP_ID is `kafka-consumer-group1`.

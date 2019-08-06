@@ -1,5 +1,7 @@
 # IBM Event Streams for IBM Cloud Kafka Node.js console sample application with MongoDB integration
-This Node.js console application demonstrates how to connect to [IBM Event Streams for IBM Cloud](https://cloud.ibm.com/docs/services/EventStreams?topic=eventstreams-getting_started), send and receive messages using the [node-rdkafka](https://github.com/Blizzard/node-rdkafka) module. It also shows how to create topics using the Kafka Admin API as exposed by `node-rdkafka`. In addition, the consumer component of the application can be configured to store the messages received into a MongoDB database.
+This Node.js console application demonstrates how to connect to [IBM Event Streams for IBM Cloud](https://cloud.ibm.com/docs/services/EventStreams?topic=eventstreams-getting_started), send and receive messages using the [node-rdkafka](https://github.com/Blizzard/node-rdkafka) module. It also shows how to create topics using the Kafka Admin API as exposed by `node-rdkafka`. In addition, the consumer component of the application can be configured to store the messages received into a MongoDB database. The diagram below depicts the architecture overview of the application components.
+
+![alt text](docs/Architecture-Overview.png "Architecture Overview")
 
 This application is based on the [kafka-nodejs-console-sample](https://github.com/ibm-messaging/event-streams-samples/tree/master/kafka-nodejs-console-sample) in the [events-streams-samples](https://github.com/ibm-messaging/event-streams-samples) for the IBM Event Streams service on IBM Cloud. The features added to [kafka-nodejs-console-sample](https://github.com/ibm-messaging/event-streams-samples/tree/master/kafka-nodejs-console-sample) are as follows:
 
